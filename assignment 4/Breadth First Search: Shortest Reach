@@ -1,0 +1,121 @@
+import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    // Complete the bfs function below.
+    static ArrayList<Integer> add_list(int n,int m)
+    {
+        ArrayList<Integer> al= new ArrayList<>();
+        al.add(n);
+        al.add(m);
+        return al;
+    }
+    static int[] bfs(int n, int m, int[][] edges, int s) 
+    {
+        int[] dist=new int[n+1];
+        int[] result=new int[n-1];
+        int step=0;
+        ArrayList<ArrayList<Integer>> list=new ArrayList<>();
+        for(int i=0;i<n+1;i++)
+        {
+            list.add(new ArrayList<Integer>());
+        }
+        for(int i=0;i<edges.length;i++)
+        {
+            int p=edges[i][0];
+            int q=edges[i][1];
+            list.get(p).add(q);
+            list.get(q).add(p);
+        }
+        Queue<ArrayList<Integer>> que=new LinkedList<ArrayList<Integer>>();
+        boolean[] vis = new boolean[n+1];
+        vis[s]=true;
+        int i1=0;
+       que.add(add_list(s,0));
+       boolean flag=false;
+       int p,q,n1,i;
+       while(!que.isEmpty())
+       {
+           ArrayList<Integer> al =que.remove();
+           p=al.get(0);
+           step=al.get(1)+6;
+           n1=list.get(p).size();
+           if(n1>0)
+           {
+                for(i=0;i<n1;i++)
+                {
+                    q=list.get(p).get(i);
+                    if(vis[q]==false)
+                    {
+                        que.add(add_list(q,step));
+                        if(dist[q]==0 || dist[q]>step)
+                            dist[q]=step;
+                        vis[q]=true;
+                    }
+                }
+            }
+        }
+        for(i=1;i<dist.length;i++)
+            {
+                if(i!=s)
+                {
+                    result[i1]=(dist[i]>0)?dist[i]:-1;
+                    i1+=1;
+                }
+            }
+        return result;
+    }
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        int q = scanner.nextInt();
+        scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+
+        for (int qItr = 0; qItr < q; qItr++) {
+            String[] nm = scanner.nextLine().split(" ");
+
+            int n = Integer.parseInt(nm[0]);
+
+            int m = Integer.parseInt(nm[1]);
+
+            int[][] edges = new int[m][2];
+
+            for (int i = 0; i < m; i++) {
+                String[] edgesRowItems = scanner.nextLine().split(" ");
+                scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+
+                for (int j = 0; j < 2; j++) {
+                    int edgesItem = Integer.parseInt(edgesRowItems[j]);
+                    edges[i][j] = edgesItem;
+                }
+            }
+
+            int s = scanner.nextInt();
+            scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+
+            int[] result = bfs(n, m, edges, s);
+
+            for (int i = 0; i < result.length; i++) {
+                bufferedWriter.write(String.valueOf(result[i]));
+
+                if (i != result.length - 1) {
+                    bufferedWriter.write(" ");
+                }
+            }
+
+            bufferedWriter.newLine();
+        }
+
+        bufferedWriter.close();
+
+        scanner.close();
+    }
+}
